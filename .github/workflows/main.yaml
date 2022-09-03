@@ -1,0 +1,66 @@
+# This workflow will install Python dependencies and package the app using pyinstaller
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Build python application
+on:
+  push:
+    branches: [ "main" ]
+    tags:
+      - '*'
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    env:
+      app_name: statistics_app
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+        include:
+          - os: ubuntu-latest
+            os-label: linux
+          - os: windows-latest
+            os-label: windows
+          - os: macOS-latest
+            os-label: macos
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller
+        # try to fix macos pyinstaller: ModuleNotFoundError: No module named 'PIL'
+        if [ "$RUNNER_OS" == "macOS" ]; then pip install --upgrade --force-reinstall Pillow; fi
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      shell: bash
+    - name: Build the app using pyinstaller on windows
+      if: matrix.os == 'windows-latest'
+      run: |
+        # copy resources\api-ms-win-core-path-blender\x64\api-ms-win-core-path-l1-1-0.dll to the packaged app in order to run it on windows 7+ os.
+        pyinstaller main.py --name statistics_app --add-data "main.ui;." --add-data "configuration.yaml;." --add-data "sample.txt;." --add-data "style;style" --add-data "resources/api-ms-win-core-path-blender/x64/api-ms-win-core-path-l1-1-0.dll;." --icon icon.ico --windowed --noconfirm --hidden-import qdarkstyle --hidden-import qdarkgraystyle
+    - name: Build the app using pyinstaller on none-windows
+      if: matrix.os != 'windows-latest'
+      run: |
+        pyinstaller main.py --name statistics_app --add-data "main.ui:." --add-data "configuration.yaml:." --add-data "sample.txt:." --add-data "style:style" --icon icon.ico --windowed --noconfirm --hidden-import qdarkstyle --hidden-import qdarkgraystyle
+    - name: Prepare release files for ${{ github.ref_name }}
+      run: |
+        7z a -tzip ${app_name}-${{ github.ref_name }}-${{ matrix.os-label }}.zip -r dist/statistics_app/*
+      shell: bash
+    - uses: actions/upload-artifact@v2
+      with:
+        path: ${app_name}-${{ github.ref_name }}-${{ matrix.os-label }}.zip
+    - uses: xresloader/upload-to-github-release@v1
+      if: contains(github.ref, 'tags')
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        file: ${app_name}-${{ github.ref_name }}-${{ matrix.os-label }}.zip
+        tags: true
+        draft: false
