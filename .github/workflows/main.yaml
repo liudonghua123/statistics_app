@@ -51,7 +51,8 @@ jobs:
         pyinstaller main.py --name statistics_app --add-data "main.ui:." --add-data "configuration.yaml:." --add-data "sample.txt:." --add-data "style:style" --icon icon.ico --windowed --noconfirm --hidden-import qdarkstyle --hidden-import qdarkgraystyle
     - name: Prepare release files for ${{ github.ref_name }}
       run: |
-        7z a -tzip ${app_name}-${{ github.ref_name }}-${{ matrix.os-label }}.zip -r dist/statistics_app/*
+        cd dist/
+        7z a -tzip ../${app_name}-${{ github.ref_name }}-${{ matrix.os-label }}.zip -r statistics_app
       shell: bash
     - uses: actions/upload-artifact@v2
       with:
