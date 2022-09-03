@@ -1,0 +1,182 @@
+sampleData: |-
+    01	09	05	02	27	14			11	12	26	13	19	30
+    05	10	01	09	15	29			26	11	12	30	17	08
+    04	29	15	10	28	05			11	12	21	17	30	08
+                                                        
+                                                        
+    27	07	03	20	01	09			21	04	08	11	12	26
+    27	03	20	13	19	01			28	10	05	11	12	08
+    03	13	16	19	20	22			15	10	08	28	05	23
+
+setupCode: |-
+  def parseData(input: str) -> tuple[pd.DataFrame]:
+      '''
+      Parse the input data into a full dataframe and the separated dataframes,
+      Named ALL, A, B, C, D
+      '''
+      df = pd.read_csv(StringIO(input), delim_whitespace=True, header=None)
+      # return A,B,C,D dataframes from the full dataframe
+      return df, df.iloc[0:3, 0:6], df.iloc[0:3, 6:], df.iloc[3:, 0:6], df.iloc[3:, 6:]
+
+
+  def dataframeToList(df: pd.DataFrame) -> list:
+      '''
+      Convert a dataframe to a list
+      '''
+      # Use a List Comprehension in Python to Flatten Lists of Lists
+      return [item for listItem in df.values.tolist() for item in listItem]
+
+
+  def dataframeToSet(df: pd.DataFrame) -> set:
+      '''
+      Convert a dataframe to a set
+      '''
+      return set(dataframeToList(df))
+
+
+  def seriesToList(series: pd.Series) -> list:
+      '''
+      Convert a series to a list
+      '''
+      # Use a List Comprehension in Python to Flatten Lists of Lists
+      return [item for item in series.values.tolist()]
+
+
+  def seriesToSet(series: pd.Series) -> set:
+      '''
+      Convert a series to a set
+      '''
+      return set(seriesToList(series))
+
+
+  def stringifyIterator(data: list[int] | set[int]) -> str:
+      '''
+      Stringify the iterable data to a space separated string
+      '''
+      logger.debug(f'data: {data}')
+      return ' '.join(map(lambda item: str(item), data))
+
+
+  def duplicateSet(data: list) -> set:
+      '''
+      Find the duplicates in a list, return as a set
+      '''
+      counts = Counter(data)
+      result = [item for item in counts if counts[item] > 1]
+      return set(result)
+
+
+  def occurTimesSet(df: pd.DataFrame, times: int) -> set:
+      '''
+      Find the elements that occur a given number of times in a dataframe, return as a set
+      '''
+      counts = Counter(dataframeToList(df))
+      result = [item for item in counts if counts[item] == times]
+      logger.info(f'counts: {counts}, result: {result}')
+      return set(result)
+
+
+  def occurEqualGreatTimesSet(df: pd.DataFrame, times: int) -> list:
+      '''
+      Find the elements that occur greater equal then times in a dataframe, return as a set
+      '''
+      counts = Counter(dataframeToList(df))
+      result = [item for item in counts if counts[item] >= times]
+      logger.info(f'counts: {counts}, result: {result}')
+      return set(result)
+
+
+
+OperationCodeBlocks:
+  - name: ASet
+    description: 1. A区集合
+    code: |-
+      ASet = dataframeToSet(A)
+  - name: BSet
+    description: 2. B区集合
+    code: |-
+      BSet = dataframeToSet(B)
+  - name: ADuplicates
+    description: 3. A区集合重复出现数的集合
+    code: |-
+      ADuplicates = duplicateSet(dataframeToList(A))
+  - name: BDuplicates
+    description: 4. B区集合重复出现数的集合
+    code: |-
+      BDuplicates = duplicateSet(dataframeToList(B))
+  - name: ABDuplicates
+    description: 5. A区B区重复出现数的合集
+    code: |-
+      ABDuplicates = ADuplicates | BDuplicates
+  - name: CSet
+    description: 6. C区集合
+    code: |-
+      CSet = dataframeToSet(C)
+  - name: BSet
+    description: 7. D区集合
+    code: |-
+      DSet = dataframeToSet(D)
+  - name: CDuplicates
+    description: 8. C区集合重复出现数的集合
+    code: |-
+      CDuplicates = duplicateSet(dataframeToList(C))
+  - name: DDuplicates
+    description: 9. D区集合重复出现数的集合
+    code: |-
+      DDuplicates = duplicateSet(dataframeToList(D))
+  - name: CDDuplicates
+    description: 10. C区D区重复出现数的合集
+    code: |-
+      CDDuplicates = CDuplicates | DDuplicates
+  - name: ACDuplicates
+    description: 11. A区C区重复出现数的合集
+    code: |-
+      ACDuplicates = ADuplicates | CDuplicates
+  - name: BDDuplicates
+    description: 12. B区D区重复出现数的合集
+    code: |-
+      BDDuplicates = BDuplicates | DDuplicates
+  - name: Row5Set
+    description: 13. 第5行集合
+    code: |-
+      Row5Set = set(seriesToList(ALL.loc[4,:]))
+  - name: ABCDDuplicates
+    description: 14. A区B区C区D区重复出现数的合集
+    code: |-
+      ABCDDuplicates = ADuplicates | BDuplicates | CDuplicates | DDuplicates
+  - name: Row1_2_12Set
+    description: 15. 第1、2和12列集合
+    code: |-
+      Row1_2_12Set = dataframeToSet(ALL.loc[:,[0,1,11]])
+  - name: ABCDDuplicatesIntersectionRow1_2_12Set
+    description: 16. A区B区C区D区重复出现数的合集与第1、2和12列集合的交集
+    code: |-
+      ABCDDuplicatesIntersectionRow1_2_12Set = ABCDDuplicates & Row1_2_12Set
+  - name: MissingInAllSet
+    description: 17. 数集(1-33)遗漏数集合
+    code: |-
+      MissingInAllSet = set(range(1,34))-dataframeToSet(ALL)
+  - name: OccurOnceSet
+    description: 18. 数集中仅出现1次的数的集合
+    code: |-
+      OccurOnceSet = occurTimesSet(ALL, 1)
+  - name: MissingInAllSetIntersectionOccurOnceSet
+    description: 19. 数集(1-33)遗漏数集合与数集中仅出现1次的数的集合的合集
+    code: |-
+      MissingInAllSetIntersectionOccurOnceSet = MissingInAllSet | OccurOnceSet
+  - name: OccurGreate3Set
+    description: 20. 数集中出现3次及以上的数的集合
+    code: |-
+      OccurGreate3Set = occurEqualGreatTimesSet(ALL, 3)
+  - name: OccurGreate3Set
+    description: 21. 数集(1-33)遗漏数集合与数集中仅出现1次的数的集合的合集 与 数集中出现3次及以上的数的集合 的合集的遗漏数集合
+    code: |-
+      OccurGreate3Set = set(range(1,34)) - (MissingInAllSetIntersectionOccurOnceSet | OccurGreate3Set)
+  - name: OccurGreate4Set
+    description: 22. 数集中出现4次及以上的数的集合
+    code: |-
+      OccurGreate4Set = occurEqualGreatTimesSet(ALL, 4)
+  - name: ACOccurGreate3Set
+    description: 23. AC数集中出现3次及以上的数的集合
+    code: |-
+      ACOccurGreate3Set = occurEqualGreatTimesSet(ALL.loc[:,0:5], 3)

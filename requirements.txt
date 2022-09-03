@@ -1,0 +1,9 @@
+pandas
+pyyaml
+pyqt5
+pyinstaller
+# some extra pyqt5 packages
+pyqt5-tools
+qdarkstyle
+qdarkgraystyle
+#git+https://github.com/pythonguis/pyqtconfig.git
