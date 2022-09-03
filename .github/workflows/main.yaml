@@ -55,7 +55,7 @@ jobs:
       shell: bash
     - uses: actions/upload-artifact@v2
       with:
-        path: ${app_name}-${{ github.ref_name }}-${{ matrix.os-label }}.zip
+        path: ${{ env.app_name }}-${{ github.ref_name }}-${{ matrix.os-label }}.zip
     - uses: xresloader/upload-to-github-release@v1
       if: contains(github.ref, 'tags')
       env:
