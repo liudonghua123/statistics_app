@@ -163,12 +163,17 @@ class Window(QMainWindow):
             self.initialize()
             codeblocks = [CodeBlock(**codeblock)
                           for codeblock in data['OperationCodeBlocks']]
-            for codeblock in codeblocks:
-                exec(codeblock.code, global_symbols)
-                value = ' '.join(
-                    [f"{item:02}" for item in sorted(globals()[codeblock.name])])
-                self.textEditResult.append(
-                    f'{codeblock.description}:\n{value}\n')
+            for index, codeblock in enumerate(codeblocks, start=1):
+                try:
+                    exec(codeblock.code, global_symbols)
+                    value = ' '.join(
+                        [f"{item:02}" for item in sorted(globals()[codeblock.name])])
+                    self.textEditResult.append(
+                        f'{index:02d}: {codeblock.description}: {value}\n')
+                except Exception as e:
+                    logger.error(f"Error: {e}")
+                    self.textEditResult.append(
+                        f'{index:02d}: {codeblock.description}: Error: {e}\n')
 
     def initialize(self):
         global data, ALL, A, B, C, D
