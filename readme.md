@@ -16,7 +16,7 @@ If `packenv` is not exists, use the following commands to create it.
 - `pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple` # install the requirements
 
 - `packenv\scripts\activate.bat` # activate the packenv
-- `pyinstaller main.py --name statistics_app --add-data main.ui;./ --add-data configuration.yaml;./ --add-data sample.txt;./ --add-data style;style --icon icon.ico --windowed --noconfirm --hidden-import qdarkstyle --hidden-import qdarkgraystyle` # if the pyistaller spec file does not exists
+- `pyinstaller main.py --name statistics_app --add-data main.ui;./ --add-data configuration.yaml;./ --add-data sample.txt;./ --add-data style;style --add-data icon.png;./ --icon icon.ico --windowed --noconfirm --hidden-import qdarkstyle --hidden-import qdarkgraystyle` # if the pyistaller spec file does not exists
 - `pyinstaller statistics_app.spec` # if the pyistaller spec file exists
 
 ### Some other staff
@@ -52,5 +52,10 @@ Other package utiles
 - https://github.com/liudonghua123/pyqt5-calculator
 - https://gregoryszorc.com/docs/pyoxidizer/main/pyoxidizer_getting_started.html
 - https://github.com/giftmischer69/easy_oxidize
+- https://www.tutorialspoint.com/python-set-operation
+- https://www.geeksforgeeks.org/python-set-operations-union-intersection-difference-symmetric-difference/
+- https://www.geeksforgeeks.org/difference-between-loc-and-iloc-in-pandas-dataframe/
+- https://www.geeksforgeeks.org/how-to-set-icon-to-a-window-in-pyqt5/
+- https://www.tutorialspoint.com/pyqt5/pyqt5_qcombobox_widget.htm
 
 

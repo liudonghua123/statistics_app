@@ -3,6 +3,7 @@
 from PyQt5.uic import loadUi
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QWidget, QGridLayout, QLineEdit, QPushButton, QApplication, QMainWindow, QActionGroup, QAction, QFileDialog, QMessageBox
+from PyQt5.QtGui import QIcon
 import sys
 import os
 import math
@@ -50,6 +51,7 @@ class Window(QMainWindow):
     def __init__(self):
         super(Window, self).__init__()
         loadUi('main.ui', self)
+        self.setWindowIcon(QIcon('icon.png'))
 
         actionGroupDefaultStyle = QActionGroup(self)
         actionGroupDefaultStyle.addAction(self.actionFusion)
