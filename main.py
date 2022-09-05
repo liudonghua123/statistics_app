@@ -27,7 +27,8 @@ app = None
 
 # define some global variables for the application,
 # and the global variables will used in the eval/exec function
-ALL = A = B = C = D = None
+ALL = A = B = C = D = E = F = G = H = I = J = K = L = None
+modelIndex = 0
 data = None
 global_symbols = globals()
 
@@ -152,6 +153,16 @@ class Window(QMainWindow):
         # TextEdit scroll to the bottom
         self.textEditConsole.ensureCursorVisible()
         # self.textEditConsole.setFocus()
+        
+        
+    @pyqtSlot()
+    def on_combobox_activate(self):
+        global modelIndex
+        text = self.comboBoxCalculateModel.currentText()
+        modelIndex = self.comboBoxCalculateModel.currentIndex()
+        self.textEditData.setText("")
+        self.initializeData()
+        
 
     @pyqtSlot()
     def on_button_clicked(self):
@@ -160,9 +171,9 @@ class Window(QMainWindow):
             # clear the result text edit
             self.textEditResult.clear()
             # load the data in case it's changed again
-            self.initialize()
+            self.initializeData()
             codeblocks = [CodeBlock(**codeblock)
-                          for codeblock in data['OperationCodeBlocks']]
+                          for codeblock in data[f'OperationCodeBlocks{modelIndex + 1}']]
             for index, codeblock in enumerate(codeblocks, start=1):
                 try:
                     exec(codeblock.code, global_symbols)
@@ -175,16 +186,27 @@ class Window(QMainWindow):
                     self.textEditResult.append(
                         f'{index:02d}: {codeblock.description}: Error: {e}\n')
 
-    def initialize(self):
-        global data, ALL, A, B, C, D
+  
+    def initializeWidget(self):
+        self.comboBoxCalculateModel.addItems(['基础测算工具','基固工具','竹园工具'])
+        self.comboBoxCalculateModel.setCurrentIndex(0)
+
+
+    def initializeData(self):
+        global data, ALL, A, B, C, D, E, F, G, H, I, J, K, L
         if self.textEditData.toPlainText() == "":
             # get the sample data
-            inputData = data['sampleData']
+            inputData = data[f'sampleData{modelIndex + 1}']
             # shirnk the input data, replace the tab to one space
             inputData = inputData.replace('\t', ' ')
             self.textEditData.setText(inputData)
         # parse the sample data
-        ALL, A, B, C, D = parseData(self.textEditData.toPlainText())
+        if modelIndex == 0:
+            ALL, A, B, C, D = globals()[f'parseData{modelIndex + 1}'](self.textEditData.toPlainText())
+        elif modelIndex == 1:
+            ALL, A, B, C, D = globals()[f'parseData{modelIndex + 1}'](self.textEditData.toPlainText())
+        elif modelIndex == 2:
+            ALL, A, B, C, D, E, F, G, H, I, J, K, L = globals()[f'parseData{modelIndex + 1}'](self.textEditData.toPlainText())
 
 
 if __name__ == '__main__':
@@ -192,5 +214,6 @@ if __name__ == '__main__':
     load_configuration()
     execute_setup_code()
     window = Window()
-    window.initialize()
+    window.initializeWidget()
+    window.initializeData()
     sys.exit(app.exec_())

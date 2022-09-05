@@ -91,11 +91,18 @@
           <widget class="QTextEdit" name="textEditData"/>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButtonStatistics">
-           <property name="text">
-            <string>Calculate</string>
-           </property>
-          </widget>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <widget class="QComboBox" name="comboBoxCalculateModel"/>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonStatistics">
+             <property name="text">
+              <string>Calculate</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
         </layout>
        </widget>
@@ -149,7 +156,7 @@
      <x>0</x>
      <y>0</y>
      <width>960</width>
-     <height>29</height>
+     <height>25</height>
     </rect>
    </property>
    <property name="sizePolicy">
@@ -452,12 +459,28 @@
    <slot>on_button_clicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>243</x>
-     <y>280</y>
+     <x>475</x>
+     <y>297</y>
     </hint>
     <hint type="destinationlabel">
      <x>479</x>
      <y>239</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>comboBoxCalculateModel</sender>
+   <signal>activated(QString)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_combobox_activate()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>193</x>
+     <y>275</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>401</x>
+     <y>32</y>
     </hint>
    </hints>
   </connection>
@@ -466,5 +489,6 @@
   <slot>on_button_clicked()</slot>
   <slot>on_action_triggered()</slot>
   <slot>on_line_edit_return_pressed()</slot>
+  <slot>on_combobox_activate()</slot>
  </slots>
 </ui>

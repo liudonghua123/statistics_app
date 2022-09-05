@@ -1,15 +1,49 @@
-sampleData: |-
-    01	09	05	02	27	14			11	12	26	13	19	30
-    05	10	01	09	15	29			26	11	12	30	17	08
-    04	29	15	10	28	05			11	12	21	17	30	08
+sampleData1: |-
+    01 09 05 02 27 14   11 12 26 13 19 30
+    05 10 01 09 15 29   26 11 12 30 17 08
+    04 29 15 10 28 05   11 12 21 17 30 08
                                                         
                                                         
-    27	07	03	20	01	09			21	04	08	11	12	26
-    27	03	20	13	19	01			28	10	05	11	12	08
-    03	13	16	19	20	22			15	10	08	28	05	23
+    27 07 03 20 01 09   21 04 08 11 12 26
+    27 03 20 13 19 01   28 10 05 11 12 08
+    03 13 16 19 20 22   15 10 08 28 05 23
+sampleData2: |-
+    13 19 30   18 15 05   10 17 33   02 16 22
+    04 29 21   01 09 14   31 02 06   18 17 30
+    05 06 08   29 30 25   20 28 31   01 02 09
+    31 15 20   23 24 07   30 10 05   06 08 09
+    02 01 03   12 28 09   30 11 07   24 29 23
+    07 18 24   30 10 12   26 13 21   25 31 17
+    11 14 16   28 29 24   05 31 06   03 10 08
+    04 11 14   16 29 03   23 24 26   33 12 31
+sampleData3: |-
+    25 06 28 24 33 17   18 29 15 19 09 20
+    30 03 31 23 26 27   04 15 19 05 07 11
+    30 03 31 26 33 25   32 05 21 12 15 19
+                             
+    02 27 08 09 14 23   21 29 07 30 32 24
+    26 28 27 02 20 03   18 25 14 21 12 09
+    02 27 05 28 08 20   11 19 09 32 21 12
+                             
+    21 30 08 23 22 26   06 27 13 31 05 02
+    28 24 30 07 04 27   21 16 02 25 13 20
+    30 24 08 28 23 26   15 33 20 05 02 13
+                             
+    20 05 25 13 02 32   28 21 18 03 07 16
+    05 06 07 27 12 28   16 10 31 08 03 24
+    05 06 13 20 02 32   07 10 08 16 24 03
+                             
+    12 20 25 30 01 09   33 05 23 11 19 04
+    12 06 13 30 01 10   20 03 07 14 31 21
+    12 30 01 13 06 08   14 31 21 33 11 04
+                             
+    07 17 11 22 31 02   14 18 23 26 03 20
+    01 21 32 29 30 07   03 17 22 14 15 23
+    07 01 11 09 06 02   20 26 03 05 14 23
+
 
 setupCode: |-
-  def parseData(input: str) -> tuple[pd.DataFrame]:
+  def parseData1(input: str) -> tuple[pd.DataFrame]:
       '''
       Parse the input data into a full dataframe and the separated dataframes,
       Named ALL, A, B, C, D
@@ -17,6 +51,24 @@ setupCode: |-
       df = pd.read_csv(StringIO(input), delim_whitespace=True, header=None)
       # return A,B,C,D dataframes from the full dataframe
       return df, df.iloc[0:3, 0:6], df.iloc[0:3, 6:], df.iloc[3:, 0:6], df.iloc[3:, 6:]
+
+  def parseData2(input: str) -> tuple[pd.DataFrame]:
+      '''
+      Parse the input data into a full dataframe and the separated dataframes,
+      Named ALL, A, B, C, D
+      '''
+      df = pd.read_csv(StringIO(input), delim_whitespace=True, header=None)
+      # return A,B,C,D dataframes from the full dataframe
+      return df, df.iloc[:, 0:3], df.iloc[:, 3:6], df.iloc[:, 6:9], df.iloc[:, 9:12]
+
+  def parseData3(input: str) -> tuple[pd.DataFrame]:
+      '''
+      Parse the input data into a full dataframe and the separated dataframes,
+      Named ALL, A, B, C, D, E, F, G, H, I, J, K, L
+      '''
+      df = pd.read_csv(StringIO(input), delim_whitespace=True, header=None)
+      # return A,B,C,D,E,F,G,H,I,J,K,L dataframes from the full dataframe
+      return df, df.iloc[0:3, 0:6], df.iloc[3:6, 0:6], df.iloc[6:9, 0:6], df.iloc[9:12, 0:6], df.iloc[12:15, 0:6], df.iloc[15:18, 0:6], df.iloc[0:3, 6:12], df.iloc[3:6, 6:12], df.iloc[6:9, 6:12], df.iloc[9:12, 6:12], df.iloc[12:15, 6:12], df.iloc[15:18, 6:12]
 
 
   def dataframeToList(df: pd.DataFrame) -> list:
@@ -57,7 +109,7 @@ setupCode: |-
       return ' '.join(map(lambda item: str(item), data))
 
 
-  def duplicateSet(data: list) -> set:
+  def duplicates(data: list) -> set:
       '''
       Find the duplicates in a list, return as a set
       '''
@@ -87,7 +139,7 @@ setupCode: |-
 
 
 
-OperationCodeBlocks:
+OperationCodeBlocks1:
   - name: ASet
     description: A区集合
     code: |-
@@ -99,15 +151,15 @@ OperationCodeBlocks:
   - name: ADuplicates
     description: A区集合重复出现数的集合
     code: |-
-      ADuplicates = duplicateSet(dataframeToList(A))
+      ADuplicates = duplicates(dataframeToList(A))
   - name: BDuplicates
     description: B区集合重复出现数的集合
     code: |-
-      BDuplicates = duplicateSet(dataframeToList(B))
-  - name: ABDuplicates
+      BDuplicates = duplicates(dataframeToList(B))
+  - name: A_BDuplicates
     description: A区B区重复出现数的合集
     code: |-
-      ABDuplicates = ADuplicates | BDuplicates
+      A_BDuplicates = ADuplicates | BDuplicates
   - name: CSet
     description: C区集合
     code: |-
@@ -119,39 +171,39 @@ OperationCodeBlocks:
   - name: CDuplicates
     description: C区集合重复出现数的集合
     code: |-
-      CDuplicates = duplicateSet(dataframeToList(C))
+      CDuplicates = duplicates(dataframeToList(C))
   - name: DDuplicates
     description: D区集合重复出现数的集合
     code: |-
-      DDuplicates = duplicateSet(dataframeToList(D))
-  - name: CDDuplicates
+      DDuplicates = duplicates(dataframeToList(D))
+  - name: C_DDuplicates
     description: C区D区重复出现数的合集
     code: |-
-      CDDuplicates = CDuplicates | DDuplicates
-  - name: ACDuplicates
+      C_DDuplicates = CDuplicates | DDuplicates
+  - name: A_CDuplicates
     description: A区C区重复出现数的合集
     code: |-
-      ACDuplicates = ADuplicates | CDuplicates
-  - name: BDDuplicates
+      A_CDuplicates = ADuplicates | CDuplicates
+  - name: B_DDuplicates
     description: B区D区重复出现数的合集
     code: |-
-      BDDuplicates = BDuplicates | DDuplicates
+      B_DDuplicates = BDuplicates | DDuplicates
   - name: Row5Set
     description: 第5行集合
     code: |-
-      Row5Set = set(seriesToList(ALL.loc[4,:]))
-  - name: ABCDDuplicates
+      Row5Set = set(seriesToList(ALL.iloc[4,:]))
+  - name: A_B_C_DDuplicates
     description: A区B区C区D区重复出现数的合集
     code: |-
-      ABCDDuplicates = ADuplicates | BDuplicates | CDuplicates | DDuplicates
+      A_B_C_DDuplicates = ADuplicates | BDuplicates | CDuplicates | DDuplicates
   - name: Row1_2_12Set
     description: 第1、2和12列集合
     code: |-
-      Row1_2_12Set = dataframeToSet(ALL.loc[:,[0,1,11]])
-  - name: ABCDDuplicatesIntersectionRow1_2_12Set
+      Row1_2_12Set = dataframeToSet(ALL.iloc[:,[0,1,11]])
+  - name: A_B_C_DDuplicatesIntersectRow1_2_12Set
     description: A区B区C区D区重复出现数的合集与第1、2和12列集合的交集
     code: |-
-      ABCDDuplicatesIntersectionRow1_2_12Set = ABCDDuplicates & Row1_2_12Set
+      A_B_C_DDuplicatesIntersectRow1_2_12Set = A_B_C_DDuplicates & Row1_2_12Set
   - name: MissingInAllSet
     description: 数集(1-33)遗漏数集合
     code: |-
@@ -160,10 +212,10 @@ OperationCodeBlocks:
     description: 数集中仅出现1次的数的集合
     code: |-
       OccurOnceSet = occurTimesSet(ALL, 1)
-  - name: MissingInAllSetIntersectionOccurOnceSet
+  - name: MissingInAllSetIntersectOccurOnceSet
     description: 数集(1-33)遗漏数集合与数集中仅出现1次的数的集合的合集
     code: |-
-      MissingInAllSetIntersectionOccurOnceSet = MissingInAllSet | OccurOnceSet
+      MissingInAllSetIntersectOccurOnceSet = MissingInAllSet | OccurOnceSet
   - name: OccurGreate3Set
     description: 数集中出现3次及以上的数的集合
     code: |-
@@ -171,7 +223,7 @@ OperationCodeBlocks:
   - name: OccurGreate3Set
     description: 数集(1-33)遗漏数集合与数集中仅出现1次的数的集合的合集 与 数集中出现3次及以上的数的集合 的合集的遗漏数集合
     code: |-
-      OccurGreate3Set = set(range(1,34)) - (MissingInAllSetIntersectionOccurOnceSet | OccurGreate3Set)
+      OccurGreate3Set = set(range(1,34)) - (MissingInAllSetIntersectOccurOnceSet | OccurGreate3Set)
   - name: OccurGreate4Set
     description: 数集中出现4次及以上的数的集合
     code: |-
@@ -179,94 +231,106 @@ OperationCodeBlocks:
   - name: ACOccurGreate3Set
     description: AC数集中出现3次及以上的数的集合
     code: |-
-      ACOccurGreate3Set = occurEqualGreatTimesSet(ALL.loc[:,0:5], 3)
+      ACOccurGreate3Set = occurEqualGreatTimesSet(ALL.iloc[:,0:6], 3)
       
-  - name: AwithBDuplicates
+  - name: ABDuplicates
     description: AB数集中重复出现数的集合
     code: |-
-      AwithBDuplicates = occurEqualGreatTimesSet(ALL.loc[0:2:,:], 2)
+      ABDuplicates = duplicates(dataframeToList(ALL.iloc[0:3,:]))
   - name: MissingInABSet
     description: AB数集中（1-33）遗漏数集合
     code: |-
-      MissingInABSet = set(range(1,34)) - dataframeToSet(ALL.loc[0:2:,:])
+      MissingInABSet = set(range(1,34)) - dataframeToSet(ALL.iloc[0:3,:])
   - name: OccurOnceInABSet
     description: AB数集中仅出现1次的数的集合
     code: |-
-      OccurOnceInABSet = occurTimesSet(ALL.loc[0:2:,:], 1)
-  - name: CwithDDuplicates
+      OccurOnceInABSet = occurTimesSet(ALL.iloc[0:3:,:], 1)
+  - name: CDDuplicates
     description: CD数集中重复出现数的集合
     code: |-
-      CwithDDuplicates = occurEqualGreatTimesSet(ALL.loc[3:6:,:], 2)
+      CDDuplicates = duplicates(dataframeToList(ALL.iloc[3:6:,:]))
   - name: MissingInCDSet
     description: CD数集中（1-33）遗漏数集合
     code: |-
-      MissingInCDSet = set(range(1,34)) - dataframeToSet(ALL.loc[3:6:,:])
+      MissingInCDSet = set(range(1,34)) - dataframeToSet(ALL.iloc[3:6:,:])
   - name: OccurOnceInCDSet
     description: CD数集中仅出现1次的数的集合
     code: |-
-      OccurOnceInCDSet = occurTimesSet(ALL.loc[3:6:,:], 1)
-  - name: AwithBDuplicatesAndCwithDDuplicates
+      OccurOnceInCDSet = occurTimesSet(ALL.iloc[3:6:,:], 1)
+  - name: ABDuplicatesUnionCDDuplicates
     description: AB数集中重复出现数的集合 | CD数集中重复出现数的集合
     code: |-
-      AwithBDuplicatesAndCwithDDuplicates = AwithBDuplicates | CwithDDuplicates
-  - name: MissingInABCDSet
+      ABDuplicatesUnionCDDuplicates = ABDuplicates | CDDuplicates
+  - name: MissingInAB_CDSet
     description: AB数集中（1-33）遗漏数集合 | CD数集中（1-33）遗漏数集合
     code: |-
-      MissingInABCDSet = MissingInABSet | MissingInCDSet
+      MissingInAB_CDSet = MissingInABSet | MissingInCDSet
   - name: OccurOnceInABCDSet
     description: AB数集中仅出现1次的数的集合 | CD数集中仅出现1次的数的集合
     code: |-
       OccurOnceInABCDSet = OccurOnceInABSet | OccurOnceInCDSet
-  - name: AwithCDuplicates
+  - name: ACDuplicates
     description: AC数集中重复出现数的集合
     code: |-
-      AwithCDuplicates = occurEqualGreatTimesSet(ALL.loc[:,0:5], 2)
+      ACDuplicates = duplicates(dataframeToList(ALL.iloc[:,0:6]))
   - name: MissingInACSet
     description: AC数集中（1-33）遗漏数集合
     code: |-
-      MissingInACSet = set(range(1,34)) - dataframeToSet(ALL.loc[:,0:5])
+      MissingInACSet = set(range(1,34)) - dataframeToSet(ALL.iloc[:,0:6])
   - name: OccurOnceInACSet
     description: AC数集中仅出现1次的数的集合
     code: |-
-      OccurOnceInACSet = occurTimesSet(ALL.loc[:,0:5], 1)
-  - name: BwithDDuplicates
+      OccurOnceInACSet = occurTimesSet(ALL.iloc[:,0:6], 1)
+  - name: BDDuplicates
     description: BD数集中重复出现数的集合
     code: |-
-      BwithDDuplicates = occurEqualGreatTimesSet(ALL.loc[:,6:11], 2)
+      BDDuplicates = duplicates(dataframeToList(ALL.iloc[:,6:12]))
   - name: MissingInBDSet
     description: BD数集中（1-33）遗漏数集合
     code: |-
-      MissingInBDSet = set(range(1,34)) - dataframeToSet(ALL.loc[:,6:11])
+      MissingInBDSet = set(range(1,34)) - dataframeToSet(ALL.iloc[:,6:12])
   - name: OccurOnceInBDSet
     description: BD数集中仅出现1次的数的集合
     code: |-
-      OccurOnceInBDSet = occurTimesSet(ALL.loc[:,6:11], 1)
-  - name: AwithCDuplicatesAndBwithDDuplicates
+      OccurOnceInBDSet = occurTimesSet(ALL.iloc[:,6:12], 1)
+  - name: ACDuplicatesUnionBDDuplicates
     description: AC数集中重复出现数的集合 | BD数集中重复出现数的集合
     code: |-
-      AwithCDuplicatesAndBwithDDuplicates = AwithCDuplicates | BwithDDuplicates
-  - name: MissingInACBDSet
+      ACDuplicatesUnionBDDuplicates = ACDuplicates | BDDuplicates
+  - name: MissingInAC_BDSet
     description: AC数集中（1-33）遗漏数集合 | BD数集中（1-33）遗漏数集合
     code: |-
-      MissingInACBDSet = MissingInACSet | MissingInBDSet
+      MissingInAC_BDSet = MissingInACSet | MissingInBDSet
   - name: OccurOnceInACBDSet
     description: AC数集中仅出现1次的数的集合 | BD数集中仅出现1次的数的集合
     code: |-
       OccurOnceInACBDSet = OccurOnceInACSet | OccurOnceInBDSet
       
-  - name: AwithBCwithDDuplicatesIntersetAwithCBwithDDuplicates
+  - name: ABCDDuplicatesIntersectACBDDuplicates
     description: ⑦与⑯重复数的集合
     code: |-
-      AwithBCwithDDuplicatesIntersetAwithCBwithDDuplicates = AwithBDuplicatesAndCwithDDuplicates & AwithCDuplicatesAndBwithDDuplicates
-  - name: MissingInABCDSetIntersetMissingInACBDSet
+      ABCDDuplicatesIntersectACBDDuplicates = ABDuplicatesUnionCDDuplicates & ACDuplicatesUnionBDDuplicates
+  - name: MissingInAB_CDSetIntersectMissingInAC_BDSet
     description: ⑧与⑰重复数的集合
     code: |-
-      MissingInABCDSetIntersetMissingInACBDSet = MissingInABCDSet & MissingInACBDSet
-  - name: OccurOnceInABCDSetIntersetOccurOnceInACBDSet
+      MissingInAB_CDSetIntersectMissingInAC_BDSet = MissingInAB_CDSet & MissingInAC_BDSet
+  - name: OccurOnceInABCDSetIntersectOccurOnceInACBDSet
     description: ⑨与⑱重复数的集合
     code: |-
-      OccurOnceInABCDSetIntersetOccurOnceInACBDSet = OccurOnceInABCDSet & OccurOnceInACBDSet
+      OccurOnceInABCDSetIntersectOccurOnceInACBDSet = OccurOnceInABCDSet & OccurOnceInACBDSet
   - name: _
     description: ⑦与⑯重复数的集合、⑧与⑰重复数的集合和⑨与⑱重复数的集合（1-33）遗漏数集合
     code: |-
-      _ = set(range(1,34)) - (AwithBCwithDDuplicatesIntersetAwithCBwithDDuplicates | MissingInABCDSetIntersetMissingInACBDSet | OccurOnceInABCDSetIntersetOccurOnceInACBDSet)
+      _ = set(range(1,34)) - (ABCDDuplicatesIntersectACBDDuplicates | MissingInAB_CDSetIntersectMissingInAC_BDSet | OccurOnceInABCDSetIntersectOccurOnceInACBDSet)
+
+OperationCodeBlocks2:
+  - name: ASet
+    description: A区集合
+    code: |-
+      ASet = dataframeToSet(A)
+
+OperationCodeBlocks3:
+  - name: ASet
+    description: A区集合
+    code: |-
+      ASet = dataframeToSet(A)
