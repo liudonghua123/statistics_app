@@ -324,10 +324,130 @@ OperationCodeBlocks1:
       _ = set(range(1,34)) - (ABCDDuplicatesIntersectACBDDuplicates | MissingInAB_CDSetIntersectMissingInAC_BDSet | OccurOnceInABCDSetIntersectOccurOnceInACBDSet)
 
 OperationCodeBlocks2:
+  - name: MissingInABSet
+    description: AB数集中（1-33）遗漏数集合
+    code: |-
+      MissingInABSet = set(range(1,34)) - dataframeToSet(ALL.iloc[:,0:6])
+  - name: MissingInCDSet
+    description: CD数集中（1-33）遗漏数集合
+    code: |-
+      MissingInCDSet = set(range(1,34)) - dataframeToSet(ALL.iloc[:,6:12])
+  - name: MissingInABSetSymmetricDifferenceMissingInCDSet
+    description: AB数集中（1-33）遗漏数集合 与 CD数集中（1-33）遗漏数集合 不同数的集合
+    code: |-
+      MissingInABSetSymmetricDifferenceMissingInCDSet = MissingInABSet ^ MissingInCDSet
+  - name: OccurEqualGreat3TimesInABSet
+    description: AB数集中出现3次及以上的数的集合
+    code: |-
+      OccurEqualGreat3TimesInABSet = occurEqualGreatTimesSet(ALL.iloc[:,0:6], 3)
+  - name: OccurEqualGreat3TimesInCDSet
+    description: CD数集中出现3次及以上的数的集合
+    code: |-
+      OccurEqualGreat3TimesInCDSet = occurEqualGreatTimesSet(ALL.iloc[:,6:12], 3)
+  - name: OccurEqualGreat3TimesInABSetSymmetricDifferenceOccurEqualGreat3TimesInCDSet
+    description: AB数集中出现3次及以上的数的集合 与 CD数集中出现3次及以上的数的集合 不同数的集合
+    code: |-
+      OccurEqualGreat3TimesInABSetSymmetricDifferenceOccurEqualGreat3TimesInCDSet = OccurEqualGreat3TimesInABSet ^ OccurEqualGreat3TimesInCDSet
+      
+  - name: ADDuplicatesSet
+    description: AD数集中重复出现数的集合
+    code: |-
+      ADDuplicatesSet = duplicates(dataframeToList(ALL.iloc[:,[0,1,2,9,10,11]]))
+  - name: MissingInADSet
+    description: AD数集中（1-33）遗漏数集合
+    code: |-
+      MissingInADSet = set(range(1,34)) - dataframeToSet(ALL.iloc[:,[0,1,2,9,10,11]])
+  - name: OccurOnceTimesInADSet
+    description: AD数集中出现仅出现1次的数的集合
+    code: |-
+      OccurOnceTimesInADSet = occurTimesSet(ALL.iloc[:,[0,1,2,9,10,11]], 1)
   - name: ASet
     description: A区集合
     code: |-
       ASet = dataframeToSet(A)
+  - name: DSet
+    description: D区集合
+    code: |-
+      DSet = dataframeToSet(D)
+  - name: ASetIntersectDSet
+    description: A集合 与 D集合 同一数的集合
+    code: |-
+      ASetIntersectDSet = ASet & DSet
+  - name: ASetSymmetricDifference_ASetIntersectDSet
+    description: A集合 与 (A集合 与 D集合 同一数的集合) 不同数的集合
+    code: |-
+      ASetSymmetricDifference_ASetIntersectDSet = ASet ^ ASetIntersectDSet
+  - name: DSetSymmetricDifference_ASetIntersectDSet
+    description: D集合 与 (A集合 与 D集合 同一数的集合) 不同数的集合
+    code: |-
+      DSetSymmetricDifference_ASetIntersectDSet = DSet ^ ASetIntersectDSet
+
+  - name: BCDuplicatesSet
+    description: BC数集中重复出现数的集合
+    code: |-
+      BCDuplicatesSet = duplicates(dataframeToList(ALL.iloc[:,3:9]))
+  - name: MissingInBCSet
+    description: BC数集中（1-33）遗漏数集合
+    code: |-
+      MissingInBCSet = set(range(1,34)) - dataframeToSet(ALL.iloc[:,3:9])
+  - name: OccurOnceTimesInBCSet
+    description: BC数集中出现仅出现1次的数的集合
+    code: |-
+      OccurOnceTimesInBCSet = occurTimesSet(ALL.iloc[:,3:9], 1)
+  - name: BSet
+    description: B区集合
+    code: |-
+      BSet = dataframeToSet(B)
+  - name: CSet
+    description: C区集合
+    code: |-
+      CSet = dataframeToSet(C)
+  - name: BSetIntersectCSet
+    description: B集合 与 C集合 同一数的集合
+    code: |-
+      BSetIntersectCSet = BSet & CSet
+  - name: BSetSymmetricDifference_BSetIntersectCSet
+    description: B集合 与 (B集合 与 C集合 同一数的集合) 不同数的集合
+    code: |-
+      BSetSymmetricDifference_BSetIntersectCSet = BSet ^ BSetIntersectCSet
+  - name: CSetSymmetricDifference_BSetIntersectCSet
+    description: C集合 与 (B集合 与 C集合 同一数的集合) 不同数的集合
+    code: |-
+      CSetSymmetricDifference_BSetIntersectCSet = CSet ^ BSetIntersectCSet
+      
+  - name: MissingInADSetUnion_ASetIntersectDSet
+    description: AD数集中（1-33）遗漏数集合 与 (A集合 与 D集合 同一数的集合) 的集合
+    code: |-
+      MissingInADSetUnion_ASetIntersectDSet = MissingInADSet | ASetIntersectDSet
+  - name: MissingInBCSetUnion_BSetIntersectCSet
+    description: BC数集中（1-33）遗漏数集合 与 (B集合 与 C集合 同一数的集合) 的集合
+    code: |-
+      MissingInBCSetUnion_BSetIntersectCSet = MissingInBCSet | BSetIntersectCSet
+  - name: Data18SymmetricDifference19
+    description: 18和19不同数的集合
+    code: |-
+      Data18SymmetricDifference19 = MissingInADSetUnion_ASetIntersectDSet ^ MissingInBCSetUnion_BSetIntersectCSet
+  - name: Data3SymmetricDifference6
+    description: 3和6不同数的集合
+    code: |-
+      Data3SymmetricDifference6 = MissingInABSetSymmetricDifferenceMissingInCDSet ^ OccurEqualGreat3TimesInABSetSymmetricDifferenceOccurEqualGreat3TimesInCDSet
+
+  - name: Data18_19_20_Intersection
+    description: 18、19和20出现重复的数的集合
+    code: |-
+      Data18_19_20_Intersection = duplicates((list(MissingInADSetUnion_ASetIntersectDSet) + list(MissingInBCSetUnion_BSetIntersectCSet) + list(Data3SymmetricDifference6)))
+  - name: Data6_12_SymmetricDifference
+    description: 6和12不同数的集合
+    code: |-
+      Data6_12_SymmetricDifference = ADDuplicatesSet ^ BCDuplicatesSet
+  - name: Data21_22_SymmetricDifference
+    description: 21和22不同数的集合
+    code: |-
+      Data21_22_SymmetricDifference = Data18_19_20_Intersection ^ Data6_12_SymmetricDifference
+  - name: OccurEqualGreat4TimesInABCDSet
+    description: ABCD数集中（1-33）遗漏数和出现4次及以上的数的集合
+    code: |-
+      OccurEqualGreat4TimesInABCDSet = occurEqualGreatTimesSet(ALL, 4)
 
 OperationCodeBlocks3:
   - name: ASet
