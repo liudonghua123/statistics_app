@@ -106,7 +106,7 @@ class Window(QMainWindow):
             app.setStyle('WindowsVista')
         elif text == "Qdarkstyle":
             # https://github.com/ColinDuquesnoy/QDarkStyleSheet
-            self.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
+            self.setStyleSheet(qdarkstyle.load_stylesheet_pyside2())
         elif text == "Qdarkgraystyle":
             # https://github.com/mstuttgart/qdarkgraystyle
             self.setStyleSheet(qdarkgraystyle.load_stylesheet())
