@@ -158,7 +158,7 @@ class Window(QMainWindow):
         
         
     @pyqtSlot()
-    def on_combobox_activate(self):
+    def on_combobox_activated(self):
         global modelIndex
         text = self.comboBoxCalculateModel.currentText()
         modelIndex = self.comboBoxCalculateModel.currentIndex()

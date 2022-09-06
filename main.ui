@@ -472,7 +472,7 @@
    <sender>comboBoxCalculateModel</sender>
    <signal>activated(QString)</signal>
    <receiver>MainWindow</receiver>
-   <slot>on_combobox_activate()</slot>
+   <slot>on_combobox_activated()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>193</x>
@@ -489,6 +489,6 @@
   <slot>on_button_clicked()</slot>
   <slot>on_action_triggered()</slot>
   <slot>on_line_edit_return_pressed()</slot>
-  <slot>on_combobox_activate()</slot>
+  <slot>on_combobox_activated()</slot>
  </slots>
 </ui>
