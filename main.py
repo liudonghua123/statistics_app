@@ -67,7 +67,7 @@ class Window(QMainWindow):
         self.show()
 
     @Slot()
-    def on_action_triggered(self):
+    def action_triggered(self):
         action = self.sender()
         text = action.text()
         if text == "Exit":
@@ -116,7 +116,7 @@ class Window(QMainWindow):
             self.setStyleSheet("")
 
     @Slot()
-    def on_line_edit_return_pressed(self):
+    def line_edit_return_pressed(self):
         expression = self.lineEditInput.text().strip()
         self.textEditConsole.append(f"{PS1}{expression}")
         # Handle special commands
@@ -157,7 +157,7 @@ class Window(QMainWindow):
         
         
     @Slot()
-    def on_combobox_activated(self):
+    def combobox_activated(self):
         global modelIndex
         text = self.comboBoxCalculateModel.currentText()
         modelIndex = self.comboBoxCalculateModel.currentIndex()
@@ -166,7 +166,7 @@ class Window(QMainWindow):
         
 
     @Slot()
-    def on_button_clicked(self):
+    def button_clicked(self):
         button = self.sender()
         if button == self.pushButtonStatistics:
             # clear the result text edit

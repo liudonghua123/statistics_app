@@ -264,7 +264,7 @@
    <sender>actionExit</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>on_action_triggered()</slot>
+   <slot>action_triggered()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -280,7 +280,7 @@
    <sender>actionFusion</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>on_action_triggered()</slot>
+   <slot>action_triggered()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -296,7 +296,7 @@
    <sender>actionQdarkgraystyle</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>on_action_triggered()</slot>
+   <slot>action_triggered()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -312,7 +312,7 @@
    <sender>actionQdarkstyle</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>on_action_triggered()</slot>
+   <slot>action_triggered()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -328,7 +328,7 @@
    <sender>actionMyStyle</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>on_action_triggered()</slot>
+   <slot>action_triggered()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -344,7 +344,7 @@
    <sender>actionWindows</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>on_action_triggered()</slot>
+   <slot>action_triggered()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -360,7 +360,7 @@
    <sender>actionWindowsVista</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>on_action_triggered()</slot>
+   <slot>action_triggered()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -376,7 +376,7 @@
    <sender>actionResetStyle</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>on_action_triggered()</slot>
+   <slot>action_triggered()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -392,7 +392,7 @@
    <sender>actionOpen</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>on_action_triggered()</slot>
+   <slot>action_triggered()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -408,7 +408,7 @@
    <sender>actionSave</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>on_action_triggered()</slot>
+   <slot>action_triggered()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -424,7 +424,7 @@
    <sender>actionSettings</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>on_action_triggered()</slot>
+   <slot>action_triggered()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -440,7 +440,7 @@
    <sender>lineEditInput</sender>
    <signal>returnPressed()</signal>
    <receiver>MainWindow</receiver>
-   <slot>on_line_edit_return_pressed()</slot>
+   <slot>line_edit_return_pressed()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>165</x>
@@ -456,7 +456,7 @@
    <sender>pushButtonStatistics</sender>
    <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
-   <slot>on_button_clicked()</slot>
+   <slot>button_clicked()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>475</x>
@@ -472,7 +472,7 @@
    <sender>comboBoxCalculateModel</sender>
    <signal>activated(QString)</signal>
    <receiver>MainWindow</receiver>
-   <slot>on_combobox_activated()</slot>
+   <slot>combobox_activated()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>193</x>
@@ -486,9 +486,9 @@
   </connection>
  </connections>
  <slots>
-  <slot>on_button_clicked()</slot>
-  <slot>on_action_triggered()</slot>
-  <slot>on_line_edit_return_pressed()</slot>
-  <slot>on_combobox_activated()</slot>
+  <slot>button_clicked()</slot>
+  <slot>action_triggered()</slot>
+  <slot>line_edit_return_pressed()</slot>
+  <slot>combobox_activated()</slot>
  </slots>
 </ui>
