@@ -1,8 +1,5 @@
 pandas
 pyyaml
-pyqt5
-# some extra pyqt5 packages
-# pyqt5-tools
+PySide2
 qdarkstyle
 qdarkgraystyle
-#git+https://github.com/pythonguis/pyqtconfig.git

@@ -1,9 +1,9 @@
 #coding: utf-8
 
-from PyQt5.uic import loadUi
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QWidget, QGridLayout, QLineEdit, QPushButton, QApplication, QMainWindow, QActionGroup, QAction, QFileDialog, QMessageBox
-from PyQt5.QtGui import QIcon
+from pyside_loadui import loadUi
+from PySide2.QtCore import Slot
+from PySide2.QtWidgets import QWidget, QGridLayout, QLineEdit, QPushButton, QApplication, QMainWindow, QActionGroup, QAction, QFileDialog, QMessageBox
+from PySide2.QtGui import QIcon
 import sys
 import os
 import math
@@ -11,7 +11,6 @@ import qdarkstyle
 import qdarkgraystyle
 # import utils
 from utils import PS1, USAGE, CodeBlock, is_expression
-# import PyQt5_stylesheets
 from dataclasses import dataclass
 from io import StringIO
 from typing import Iterator
@@ -67,7 +66,7 @@ class Window(QMainWindow):
         actionGroupStyle.setExclusive(True)
         self.show()
 
-    @pyqtSlot()
+    @Slot()
     def on_action_triggered(self):
         action = self.sender()
         text = action.text()
@@ -116,7 +115,7 @@ class Window(QMainWindow):
         elif text == "ResetStyle":
             self.setStyleSheet("")
 
-    @pyqtSlot()
+    @Slot()
     def on_line_edit_return_pressed(self):
         expression = self.lineEditInput.text().strip()
         self.textEditConsole.append(f"{PS1}{expression}")
@@ -157,7 +156,7 @@ class Window(QMainWindow):
         # self.textEditConsole.setFocus()
         
         
-    @pyqtSlot()
+    @Slot()
     def on_combobox_activated(self):
         global modelIndex
         text = self.comboBoxCalculateModel.currentText()
@@ -166,7 +165,7 @@ class Window(QMainWindow):
         self.initializeData()
         
 
-    @pyqtSlot()
+    @Slot()
     def on_button_clicked(self):
         button = self.sender()
         if button == self.pushButtonStatistics:
