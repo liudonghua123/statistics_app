@@ -1,35 +1,28 @@
-#coding: utf-8
-
-from PyQt5.uic import loadUi
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QWidget, QGridLayout, QLineEdit, QPushButton, QApplication, QMainWindow, QActionGroup, QAction, QFileDialog, QMessageBox
-from PyQt5.QtGui import QIcon
-import sys
-import os
-import math
-import qdarkstyle
-import qdarkgraystyle
-# import utils
-from utils import PS1, USAGE, CodeBlock, is_expression
+import logging
+from collections import Counter
 # import PyQt5_stylesheets
 from dataclasses import dataclass
 from io import StringIO
 from typing import Iterator
-import pandas as pd
+
+import flet
 import numpy as np
+import pandas as pd
 import yaml
-from collections import Counter
-import logging
+from flet import (Card, Column, Container, Dropdown, FilledButton, IconButton,
+                  Page, Ref, Row, TextField, dropdown, icons, Theme)
+
+from utils import PS1, USAGE, CodeBlock, is_expression
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-app = None
+common_height = 35
+common_text_size = 12
 
 # define some global variables for the application,
 # and the global variables will used in the eval/exec function
 ALL = A = B = C = D = E = F = G = H = I = J = K = L = None
-modelIndex = 0
 data = None
 global_symbols = globals()
 
@@ -47,84 +40,79 @@ def execute_setup_code():
     exec(data['setupCode'], global_symbols)
 
 
-class Window(QMainWindow):
-    def __init__(self):
-        super(Window, self).__init__()
-        loadUi('main.ui', self)
-        self.setWindowIcon(QIcon('icon.png'))
+def main(page: Page):
+    page.title = "statistics_app"
+    # https://flet.dev/blog/using-custom-fonts-in-flet-app/
+    # page.fonts = {
+    #     "Kanit": "https://raw.githubusercontent.com/google/fonts/master/ofl/kanit/Kanit-Bold.ttf",
+    #     "Aleo Bold Italic": "https://raw.githubusercontent.com/google/fonts/master/ofl/aleo/Aleo-BoldItalic.ttf"
+    # }
+    page.theme = Theme(
+        font_family="Microsoft YaHei UI",
+    )
 
-        actionGroupDefaultStyle = QActionGroup(self)
-        actionGroupDefaultStyle.addAction(self.actionFusion)
-        actionGroupDefaultStyle.addAction(self.actionWindows)
-        actionGroupDefaultStyle.addAction(self.actionWindowsVista)
-        actionGroupDefaultStyle.setExclusive(True)
+    # some refs
+    model_dropdown = Ref[Dropdown]()
+    command_textfield = Ref[TextField]()
+    command_shell_textfield = Ref[TextField]()
+    input_textfield = Ref[TextField]()
+    result_textfield = Ref[TextField]()
 
-        actionGroupStyle = QActionGroup(self)
-        actionGroupStyle.addAction(self.actionQdarkstyle)
-        actionGroupStyle.addAction(self.actionQdarkgraystyle)
-        actionGroupStyle.addAction(self.actionMyStyle)
-        actionGroupStyle.addAction(self.actionResetStyle)
-        actionGroupStyle.setExclusive(True)
-        self.show()
+    def initializeData():
+        global data, ALL, A, B, C, D, E, F, G, H, I, J, K, L
+        modelIndex = int(model_dropdown.current.value)
+        if input_textfield.current.value == "":
+            # get the sample data
+            inputData = data[f'sampleData{modelIndex + 1}']
+            # shirnk the input data, replace the tab to one space
+            inputData = inputData.replace('\t', ' ')
+            input_textfield.current.value = inputData
+        # parse the sample data
+        if modelIndex == 0:
+            ALL, A, B, C, D = globals()[f'parseData{modelIndex + 1}'](input_textfield.current.value)
+        elif modelIndex == 1:
+            ALL, A, B, C, D = globals()[f'parseData{modelIndex + 1}'](input_textfield.current.value)
+        elif modelIndex == 2:
+            ALL, A, B, C, D, E, F, G, H, I, J, K, L = globals()[f'parseData{modelIndex + 1}'](input_textfield.current.value)
+        page.update()
 
-    @pyqtSlot()
-    def on_action_triggered(self):
-        action = self.sender()
-        text = action.text()
-        if text == "Exit":
-            app.quit()
-        elif text == "Open":
-            # open the data file specified by the user and put it in the textEditData
-            filePath, _ = QFileDialog.getOpenFileName(
-                self, caption='打开数据文本文件', filter='Text Files (*.txt)')
-            logger.info(f'filePath:{filePath}, _:{_}')
-            if filePath:
-                f = open(filePath, 'r', encoding='utf-8')
-                with f:
-                    data = f.read()
-                    # shirnk the input data, replace the tab to one space
-                    data = data.replace('\t', ' ')
-                    self.textEditData.setText(data)
-                QMessageBox.information(self, "提示", "已加载数据文本文件内容到输入数据区")
-        elif text == "Save":
-            if self.textEditResult.toPlainText() == "":
-                return QMessageBox.warning(self, '警告', '结果区为空，请先计算结果')
-            # open the result file specified by the user for saving textEditResult content
-            filePath, _ = QFileDialog.getSaveFileName(
-                self, caption='打开结果保存文件', filter='Text Files (*.txt)')
-            logger.info(f'filePath:{filePath}, _:{_}')
-            if filePath:
-                f = open(filePath, 'w', encoding='utf-8')
-                with f:
-                    data = f.write(self.textEditResult.toPlainText())
-                QMessageBox.information(self, "提示", "保存成功")
+    def model_change(e):
+        modelIndex = int(model_dropdown.current.value)
+        input_textfield.current.value = ''
+        initializeData()
 
-        elif text == "Fusion":
-            app.setStyle('Fusion')
-        elif text == "Windows":
-            app.setStyle('Windows')
-        elif text == "WindowsVista":
-            app.setStyle('WindowsVista')
-        elif text == "Qdarkstyle":
-            # https://github.com/ColinDuquesnoy/QDarkStyleSheet
-            self.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
-        elif text == "Qdarkgraystyle":
-            # https://github.com/mstuttgart/qdarkgraystyle
-            self.setStyleSheet(qdarkgraystyle.load_stylesheet())
-        elif text == "MyStyle":
-            self.setStyleSheet(open('style/material/material-blue.qss').read())
-        elif text == "ResetStyle":
-            self.setStyleSheet("")
+    def calculate_button_click(e):
+        # clear the result text edit
+        result_textfield.current.value = ''
+        # load the data in case it's changed again
+        initializeData()
+        codeblocks = [CodeBlock(**codeblock)
+                      for codeblock in data[f'OperationCodeBlocks{int(model_dropdown.current.value) + 1}']]
+        for index, codeblock in enumerate(codeblocks, start=1):
+            try:
+                exec(codeblock.code, global_symbols)
+                value = ' '.join(
+                    [f"{item:02}" for item in sorted(globals()[codeblock.name])])
+                result_textfield.current.value = result_textfield.current.value + \
+                    f'{index:02d}: {codeblock.description}: {value}\n'
+            except Exception as e:
+                logger.error(f"Error: {e}")
+                result_textfield.current.value = result_textfield.current.value + \
+                    f'{index:02d}: {codeblock.description}: Error: {e}\n'
+        page.update()
 
-    @pyqtSlot()
-    def on_line_edit_return_pressed(self):
-        expression = self.lineEditInput.text().strip()
-        self.textEditConsole.append(f"{PS1}{expression}")
+    def command_submit(e):
+        if command_shell_textfield.current.value == '':
+            command_shell_textfield.current.value = f'{command_shell_textfield.current.value}{PS1}'
+        expression = command_textfield.current.value.strip()
+        command_shell_textfield.current.value = command_shell_textfield.current.value + \
+            f"{expression}\n"
         # Handle special commands
         if expression.lower() == "help":
-            self.textEditConsole.append(USAGE)
+            command_shell_textfield.current.value = command_shell_textfield.current.value + USAGE
         elif expression.lower() == "clear":
-            return self.textEditConsole.setText(f"{PS1}")
+            command_shell_textfield.current.value = f"{PS1}"
+            return None
         # Evaluate the expression and handle errors
         try:
             if is_expression(expression):
@@ -133,89 +121,110 @@ class Window(QMainWindow):
                 try:
                     result = eval(expression, global_symbols)
                     # print the result
-                    self.textEditConsole.append(f"{result}")
+                    command_shell_textfield.current.value = f'{command_shell_textfield.current.value}{result}\n'
                 except Exception as e:
                     logger.error(f"Error: {e}")
-                    self.textEditConsole.append(f"Error: {e}")
+                    command_shell_textfield.current.value = f'{command_shell_textfield.current.value}Error: {e}\n'
             else:
                 logger.info(f"Execute statement: {expression}")
                 try:
                     exec(expression, global_symbols)
-                    self.textEditConsole.append(f"Executed statement!")
+                    command_shell_textfield.current.value = f'{command_shell_textfield.current.value}Executed statement!\n'
                 except Exception as e:
                     logger.error(f"Error: {e}")
-                    self.textEditConsole.append(f"Error: {e}")
+                    command_shell_textfield.current.value = f'{command_shell_textfield.current.value}Error: {e}\n'
         except SyntaxError:
             # If the user enters an invalid expression
-            self.textEditConsole.append("Invalid input expression syntax")
+            command_shell_textfield.current.value = f'{command_shell_textfield.current.value}Invalid input expression syntax\n'
         except (NameError, ValueError) as err:
             # If the user tries to use a name that isn't allowed
             # or an invalid value for a given math function
-            self.textEditConsole.append(str(err))
-        # TextEdit scroll to the bottom
-        self.textEditConsole.ensureCursorVisible()
-        # self.textEditConsole.setFocus()
-        
-        
-    @pyqtSlot()
-    def on_combobox_activate(self):
-        global modelIndex
-        text = self.comboBoxCalculateModel.currentText()
-        modelIndex = self.comboBoxCalculateModel.currentIndex()
-        self.textEditData.setText("")
-        self.initializeData()
-        
+            command_shell_textfield.current.value = f'{command_shell_textfield.current.value}{str(err)}\n'
+            
+        command_shell_textfield.current.value = f'{command_shell_textfield.current.value}{PS1}'
+        page.update()
 
-    @pyqtSlot()
-    def on_button_clicked(self):
-        button = self.sender()
-        if button == self.pushButtonStatistics:
-            # clear the result text edit
-            self.textEditResult.clear()
-            # load the data in case it's changed again
-            self.initializeData()
-            codeblocks = [CodeBlock(**codeblock)
-                          for codeblock in data[f'OperationCodeBlocks{modelIndex + 1}']]
-            for index, codeblock in enumerate(codeblocks, start=1):
-                try:
-                    exec(codeblock.code, global_symbols)
-                    value = ' '.join(
-                        [f"{item:02}" for item in sorted(globals()[codeblock.name])])
-                    self.textEditResult.append(
-                        f'{index:02d}: {codeblock.description}: {value}\n')
-                except Exception as e:
-                    logger.error(f"Error: {e}")
-                    self.textEditResult.append(
-                        f'{index:02d}: {codeblock.description}: Error: {e}\n')
-
-  
-    def initializeWidget(self):
-        self.comboBoxCalculateModel.addItems(['基础测算工具','基固工具','竹园工具'])
-        self.comboBoxCalculateModel.setCurrentIndex(0)
-
-
-    def initializeData(self):
-        global data, ALL, A, B, C, D, E, F, G, H, I, J, K, L
-        if self.textEditData.toPlainText() == "":
-            # get the sample data
-            inputData = data[f'sampleData{modelIndex + 1}']
-            # shirnk the input data, replace the tab to one space
-            inputData = inputData.replace('\t', ' ')
-            self.textEditData.setText(inputData)
-        # parse the sample data
-        if modelIndex == 0:
-            ALL, A, B, C, D = globals()[f'parseData{modelIndex + 1}'](self.textEditData.toPlainText())
-        elif modelIndex == 1:
-            ALL, A, B, C, D = globals()[f'parseData{modelIndex + 1}'](self.textEditData.toPlainText())
-        elif modelIndex == 2:
-            ALL, A, B, C, D, E, F, G, H, I, J, K, L = globals()[f'parseData{modelIndex + 1}'](self.textEditData.toPlainText())
-
-
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
+    page.add(
+        Row(
+            [
+                Column(
+                    [
+                        TextField(
+                            ref=input_textfield,
+                            min_lines=100,
+                            label="Data:",
+                            expand=True,
+                            multiline=True,
+                            autofocus=True,
+                            text_size=common_text_size,
+                        ),
+                        Row(
+                            [
+                                Dropdown(
+                                    ref=model_dropdown,
+                                    label="model",
+                                    hint_text="Choose the model of calculation?",
+                                    content_padding=5,
+                                    text_size=common_text_size,
+                                    height=common_height,
+                                    options=[
+                                        dropdown.Option(key=0, text="基础测算工具"),
+                                        dropdown.Option(key=1, text="基固工具"),
+                                        dropdown.Option(key=2, text="竹园工具"),
+                                    ],
+                                    value=0,
+                                    expand=True,
+                                    on_change=model_change,
+                                ),
+                                FilledButton(
+                                    text="Calculate",
+                                    height=common_height,
+                                    icon=icons.CALCULATE,
+                                    on_click=calculate_button_click,
+                                ),
+                            ]
+                        ),
+                        TextField(
+                            ref=command_textfield,
+                            label="Enter command here...",
+                            height=common_height,
+                            text_size=common_text_size,
+                            on_submit=command_submit,
+                        ),
+                        TextField(
+                            ref=command_shell_textfield,
+                            label="Console",
+                            text_size=common_text_size,
+                            read_only=True,
+                            min_lines=100,
+                            expand=True,
+                            multiline=True,
+                        ),
+                    ],
+                    expand=True,
+                ),
+                Container(
+                    TextField(
+                        ref=result_textfield,
+                        read_only=True,
+                        text_size=common_text_size,
+                        height=10000,
+                        min_lines=500,
+                        label="Result:",
+                        expand=True,
+                        multiline=True,
+                    ),
+                    expand=True,
+                )
+            ],
+            expand=True,
+            alignment="start"
+        )
+    )
     load_configuration()
     execute_setup_code()
-    window = Window()
-    window.initializeWidget()
-    window.initializeData()
-    sys.exit(app.exec_())
+    initializeData()
+    page.update()
+
+
+flet.app(target=main)
