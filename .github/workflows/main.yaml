@@ -46,11 +46,11 @@ jobs:
       if: matrix.os == 'windows-latest'
       run: |
         # copy resources\api-ms-win-core-path-blender\x64\api-ms-win-core-path-l1-1-0.dll to the packaged app in order to run it on windows 7+ os.
-        pyinstaller main.py --name statistics_app --add-data "main.ui;." --add-data "configuration.yaml;." --add-data "sample.txt;." --add-data "icon.png;." --add-data "style;style" --add-data "resources/api-ms-win-core-path-blender/x64/api-ms-win-core-path-l1-1-0.dll;." --icon icon.ico --windowed --noconfirm --hidden-import qdarkstyle --hidden-import qdarkgraystyle
+        pyinstaller main.py --name statistics_app --add-data "main.ui;." --add-data "configuration.yaml;." --add-data "sample.txt;." --add-data "icon.png;." --add-data "readme.md;." --add-data "style;style" --add-data "resources/api-ms-win-core-path-blender/x64/api-ms-win-core-path-l1-1-0.dll;." --icon icon.ico --windowed --noconfirm --hidden-import qdarkstyle --hidden-import qdarkgraystyle
     - name: Build the app using pyinstaller on none-windows
       if: matrix.os != 'windows-latest'
       run: |
-        pyinstaller main.py --name statistics_app --add-data "main.ui:." --add-data "configuration.yaml:." --add-data "sample.txt:." --add-data "icon.png:." --add-data "style:style" --icon icon.ico --windowed --noconfirm --hidden-import qdarkstyle --hidden-import qdarkgraystyle
+        pyinstaller main.py --name statistics_app --add-data "main.ui:." --add-data "configuration.yaml:." --add-data "sample.txt:." --add-data "icon.png:." --add-data "readme.md:." --add-data "style:style" --icon icon.ico --windowed --noconfirm --hidden-import qdarkstyle --hidden-import qdarkgraystyle
     - name: Prepare release files for ${{ github.ref_name }}
       run: |
         cd dist/
