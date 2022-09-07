@@ -105,7 +105,7 @@ setupCode: |-
       '''
       Stringify the iterable data to a space separated string
       '''
-      logger.debug(f'data: {data}')
+      # logger.debug(f'data: {data}')
       return ' '.join(map(lambda item: str(item), data))
 
 
@@ -124,7 +124,7 @@ setupCode: |-
       '''
       counts = Counter(dataframeToList(df))
       result = [item for item in counts if counts[item] == times]
-      logger.info(f'counts: {counts}, result: {result}')
+      # logger.info(f'counts: {counts}, result: {result}')
       return set(result)
 
 
@@ -134,7 +134,7 @@ setupCode: |-
       '''
       counts = Counter(dataframeToList(df))
       result = [item for item in counts if counts[item] >= times]
-      logger.info(f'counts: {counts}, result: {result}')
+      # logger.info(f'counts: {counts}, result: {result}')
       return set(result)
 
 
